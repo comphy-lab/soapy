@@ -16,7 +16,7 @@ char filename[80];
 int nx, ny, len;
 double xmin, ymin, xmax, ymax, Deltax, Deltay;
 
-scalar D2c[], vel[];
+scalar T[];
 scalar * list = NULL;
 
 /**
@@ -49,29 +49,16 @@ scalar * list = NULL;
   xmax = atof(arguments[4]); ymax = atof(arguments[5]);
   ny = atoi(arguments[6]);
 
-  list = list_add (list, D2c);
-  list = list_add (list, vel);
+  list = list_add (list, T);
 
   /*
   Actual run and codes!
   */
   restore (file = filename);
 
-  foreach() {
-    double D11 = (u.y[0,1] - u.y[0,-1])/(2*Delta);
-    double D22 = (u.y[]/y);
-    double D33 = (u.x[1,0] - u.x[-1,0])/(2*Delta);
-    double D13 = 0.5*( (u.y[1,0] - u.y[-1,0] + u.x[0,1] - u.x[0,-1])/(2*Delta) );
-    double D2 = (sq(D11)+sq(D22)+sq(D33)+2.0*sq(D13));
-    D2c[] = f[]*D2;
-    
-    if (D2c[] > 0.){
-      D2c[] = log(D2c[])/log(10);
-    } else {
-      D2c[] = -10;
-    }
-
-    vel[] = sqrt(sq(u.x[])+sq(u.y[]));
+  double maxT = statsf(T).max;
+  foreach(){
+    T[] *= 1e0/maxT;
   }
 
   FILE * fp = ferr;
