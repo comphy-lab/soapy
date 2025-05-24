@@ -86,8 +86,8 @@ Variant configuration for studying partial bubble dynamics with modified boundar
 ### Quick Setup
 ```bash
 # Clone repository
-git clone git@github.com:comphy-lab/SOAPY.git
-cd SOAPY
+git clone git@github.com:comphy-lab/soapy.git
+cd soapy
 
 # Install Basilisk locally
 ./reset_install_requirements.sh
