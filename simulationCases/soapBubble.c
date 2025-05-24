@@ -46,7 +46,7 @@ p[right] = dirichlet(0.);
 
 int main(){
   L0=Ldomain;
-  X0=0.0; Y0=0.;
+  X0=-L0/2.0; Y0=0.;
   init_grid (1 << (6));
 
   char comm[80];
@@ -69,7 +69,7 @@ event init(t = 0){
     /**
     We can now initialize the volume fractions in the domain. */
     refine(x<1.02 && y < h0+1.02 && level<MAXlevel);
-    fraction(f, y < h0+1 ? 1-(sq(x)+sq(y-1-h0)) : 1-x);
+    fraction(f, y < h0+1 ? 1-(sq(x)+sq(y-1-h0)) : 1-fabs(x));
     f.prolongation = refine_bilinear;
     boundary((scalar *){f});
 
