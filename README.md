@@ -41,15 +41,14 @@ The code models a soap bubble consisting of:
 ## Repository Structure
 
 ```
-├── simulationCases/: Main simulation codes
-│   ├── soapBubble-full.c: Full bubble simulation (spherical cap + rim)
-│   └── soapBubble-half.c: Half-bubble simulation variant
-├── postProcess/: Post-processing and visualization tools
-│   ├── getData.c: Field data extraction utility
-│   ├── getFacet.c: Interface facet extraction
-│   └── Video-generic.py: Animation generation script
-├── basilisk/src/: Core Basilisk CFD library (reference only)
-└── Makefile: Build configuration
+├── basilisk/src/               Core Basilisk CFD library (reference only, do not modify)
+├── simulationCases/                Test cases for simulation
+│   └── soapBubble-full.c           Full bubble simulation (spherical cap + rim)
+│   └── soapBubble-half.c           Half-bubble simulation variant
+└── postProcess/                Project-specific post-processing tools
+    ├── getData.c            Data extraction utility
+    ├── getFacet.c            Interface facet extraction
+    └── Video-generic.py     Python script for post-processing
 ```
 
 ## Simulation Configurations
