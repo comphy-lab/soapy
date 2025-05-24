@@ -1,0 +1,151 @@
+# OS generated files
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE/Editor folders
+.vscode/
+.idea/
+*.swp
+*~
+
+# Prerequisites
+*.d
+
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Linker output
+*.ilk
+*.map
+*.exp
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Shared objects
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Kernel Module Compile Results
+*.mod*
+*.cmd
+.tmp_versions/
+modules.order
+Module.symvers
+Mkfile.old
+dkms.conf
+
+# Build and dependency directories
+build/
+bin/
+obj/
+deps/
+
+# Project specific files
+# **/_darcs
+**/intermediate*
+**/log*.dat
+**/restart*
+**/*.tags*
+**/*.deps
+**/*.tests
+**/*.tst
+**/*.s
+**/*.s.o
+**/*.s.d
+**/*.s.d.o
+**/*.s.d.d
+**/*.s.d.d.o
+**/*.s.d.d.d
+**/*.s.d.d.d.o
+**/*.s.d.d.d.d
+**/Video
+**/*.mp4
+**/*.bv
+# **/*.png
+
+# some ai files
+**/CLAUDE.md
+**/.windsurfrules
+**/.cursorrules
+
+# Custom executables
+**/1-conduction-simple
+**/1-conduction-transient
+**/1-conduction-simple-basilisk
+**/1-conduction-transient-basilisk
+**/1-conduction-transient-basilisk-withHeaders
+**/1-conduction-Axi
+**/1-conduction-2D
+**/1-conduction-2D-annulus
+**/2-2D_rot_cylinder_ink
+**/2-2D_rot_cylinder
+**/2-Rayleigh-Benard
+**/2-Rayleigh-Benard_AMR
+**/2-LidDrivenCavity-Bingham
+**/2-LidDrivenCavity-Bingham_QUES
+**/2-LidDrivenCavity-Newtonian-dieInjection
+**/3-DropImpactOnPool
+**/3-HeatedDropImpact
+**/3-HeatedDropImpact-2D
+**/3-HeatedDropImpact-2D-annulus
+**/3-HeatedDropImpact-Axi
+**/3-HeatedDropImpact-2D-annulus
+**/3-HeatedDropImpact-Axi
+**/3-EquilibriumOfLiquidLenses
+**/3-DropImpactOnSolids
+**/4-BurstingBubbles-WithPolymers
+**/4-DropImpact-HB
+**/4-Taylor-Cluick-elatic
+**/2-LidDrivenCavity-Newtonian
+**/dump
+**/restart
+**/getData-Rayleigh-Benard
+**/getData-2D_rot_cylinder_ink
+**/2-Poiseuille-flow-Newtonian
+**/2-Poiseuille-flow-Bingham-FaceVsCenter
+**/2-Poiseuille-flow-Bingham
+**/getDatay-center
+**/getDatay-Face
+**/getFacet
+**/getData
+**/getData-generic-heatEq
+**/getData-generic-one-phase
+**/getData-LidDriven
+
+# Never exclude these files
+!*.c
+!*.h
+!*.sbatch
+**/getData-generic
+**/getData-Line
