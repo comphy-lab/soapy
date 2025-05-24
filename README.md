@@ -1,11 +1,13 @@
-# Soap Bubble Wrinkling Instabilities: A Computational Study
+# SOAPY - Simulation Of Axisymmetric Phenomena in bubblY films
 
-[![Issues](https://img.shields.io/github/issues/comphy-lab/Taylor-Culick-SoapBubble)](https://github.com/comphy-lab/Taylor-Culick-SoapBubble/issues)
-[![License](https://img.shields.io/github/license/comphy-lab/Taylor-Culick-SoapBubble)](https://github.com/comphy-lab/Taylor-Culick-SoapBubble/blob/main/LICENSE)
-[![Last Commit](https://img.shields.io/github/last-commit/comphy-lab/Taylor-Culick-SoapBubble)](https://github.com/comphy-lab/Taylor-Culick-SoapBubble/commits/main)
+[![Issues](https://img.shields.io/github/issues/comphy-lab/SOAPY)](https://github.com/comphy-lab/SOAPY/issues)
+[![License](https://img.shields.io/github/license/comphy-lab/SOAPY)](https://github.com/comphy-lab/SOAPY/blob/main/LICENSE)
+[![Last Commit](https://img.shields.io/github/last-commit/comphy-lab/SOAPY)](https://github.com/comphy-lab/SOAPY/commits/main)
 [![Basilisk](https://img.shields.io/badge/Basilisk-Compatible-green)](http://basilisk.fr/)
 [![Research](https://img.shields.io/badge/Research-Fluid%20Dynamics-blue)](https://comphy-lab.org)
-![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/comphy-lab/Taylor-Culick-SoapBubble?utm_source=oss&utm_medium=github&utm_campaign=comphy-lab%2FTaylor-Culick-SoapBubble&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
+![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/comphy-lab/SOAPY?utm_source=oss&utm_medium=github&utm_campaign=comphy-lab%2FSOAPY&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
+
+**S**imulation **O**f **A**xisymmetric **P**henomena in bubbl**Y** films
 
 High-fidelity simulations of soap bubble dynamics and wrinkling instabilities using Basilisk C.
 
@@ -84,8 +86,8 @@ Variant configuration for studying partial bubble dynamics with modified boundar
 ### Quick Setup
 ```bash
 # Clone repository
-git clone <repository-url>
-cd Taylor-Culick-SoapBubble
+git clone git@github.com:comphy-lab/SOAPY.git
+cd SOAPY
 
 # Install Basilisk locally
 ./reset_install_requirements.sh
