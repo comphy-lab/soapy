@@ -31,17 +31,23 @@ char filename[80];
 Extract facets from a saved simulation state.
 
 ### Parameters
-- `a`: Argument count
-- `arguments`: Command-line arguments
-  - `arguments[1]`: Simulation file path
+- `argc`: Argument count
+- `argv`: Command-line arguments
+  - `argv[1]`: Simulation file path
 
 ### Process
-1. Load simulation file
-2. Extract facets from VOF field
-3. Output to stderr
+1. Validate arguments
+2. Load simulation file
+3. Extract facets from VOF field
+4. Output to stderr
 */
-int main(int a, char const *arguments[]) {
-  snprintf(filename, sizeof(filename), "%s", arguments[1]);
+int main(int argc, char *argv[]) {
+  if (argc != 2) {
+    fprintf(stderr, "Usage: %s <simulation_file>\n", argv[0]);
+    return 1;
+  }
+  
+  snprintf(filename, sizeof(filename), "%s", argv[1]);
   restore(file = filename);
   
   FILE * fp = ferr;

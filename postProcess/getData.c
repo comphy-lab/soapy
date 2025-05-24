@@ -57,7 +57,7 @@ int main(int a, char const *arguments[]) {
     return 1;
   }
 
-  snprintf(filename, sizeof(filename), "%s", arguments[1]);
+  sprintf(filename, "%s", arguments[1]);
   xmin = atof(arguments[2]); ymin = atof(arguments[3]);
   xmax = atof(arguments[4]); ymax = atof(arguments[5]);
   ny = atoi(arguments[6]);
@@ -68,3 +68,47 @@ int main(int a, char const *arguments[]) {
   restore(file = filename);
 
   /* Normalize T by maximum value */
+  double maxT = statsf(T).max;
+  foreach() {
+    T[] *= 1e0/maxT;
+  }
+
+  FILE * fp = ferr;
+  
+  /* Calculate grid parameters */
+  Deltay = (double)((ymax-ymin)/(ny));
+  nx = (int)((xmax - xmin)/Deltay);
+  Deltax = (double)((xmax-xmin)/(nx));
+  len = list_len(list);
+  
+  /* Allocate and fill interpolation matrix */
+  double ** field = (double **) matrix_new(nx, ny+1, len*sizeof(double));
+  
+  for (int i = 0; i < nx; i++) {
+    double x = Deltax*(i+1./2) + xmin;
+    for (int j = 0; j < ny; j++) {
+      double y = Deltay*(j+1./2) + ymin;
+      int k = 0;
+      for (scalar s in list) {
+        field[i][len*j + k++] = interpolate(s, x, y);
+      }
+    }
+  }
+
+  /* Output interpolated data */
+  for (int i = 0; i < nx; i++) {
+    double x = Deltax*(i+1./2) + xmin;
+    for (int j = 0; j < ny; j++) {
+      double y = Deltay*(j+1./2) + ymin;
+      fprintf(fp, "%g %g", x, y);
+      int k = 0;
+      for (scalar s in list) {
+        fprintf(fp, " %g", field[i][len*j + k++]);
+      }
+      fputc('\n', fp);
+    }
+  }
+  
+  fflush(fp);
+  matrix_free(field);
+}
