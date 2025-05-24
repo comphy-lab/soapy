@@ -68,7 +68,7 @@ event init(t = 0){
   if(!restore (file = "dump")){
     /**
     We can now initialize the volume fractions in the domain. */
-    refine(x<1.02 && y < h0+1.02 && level<MAXlevel);
+    refine(fabs(x)<1.02 && y < h0+1.02 && level<MAXlevel);
     fraction(f, y < h0+1 ? 1-(sq(x)+sq(y-1-h0)) : 1-fabs(x));
     f.prolongation = refine_bilinear;
     boundary((scalar *){f});
