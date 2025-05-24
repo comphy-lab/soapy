@@ -72,7 +72,7 @@ obj/
 deps/
 
 # Project specific files
-# **/_darcs
+**/_darcs
 **/intermediate*
 **/log*.dat
 **/restart*
