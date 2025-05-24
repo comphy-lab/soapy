@@ -314,24 +314,10 @@ def main():
     The parallel processing significantly speeds up visualization of large
     simulation datasets by processing multiple timesteps simultaneously.
     """
-    # ===============================
-    # Command Line Argument Parsing
-    # ===============================
+
     parser = argparse.ArgumentParser(
         description='Generate visualizations from Basilisk simulation snapshots',
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
-Examples:
-  # Basic usage with 8 CPUs:
-  python %(prog)s --CPUs 8
-  
-  # Process specific case with custom domain:
-  python %(prog)s --caseToProcess ../myCase --RMAX 5.0 --ZMAX 10.0
-  
-  # High-resolution output:
-  python %(prog)s --GridsPerR 256 --nGFS 2000
-        """
-    )
+        formatter_class=argparse.RawDescriptionHelpFormatter)
     
     parser.add_argument('--CPUs', type=int, default=8, 
                        help='Number of CPUs to use for parallel processing')
