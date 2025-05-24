@@ -1,8 +1,11 @@
 # Soap Bubble Wrinkling Instabilities: A Computational Study
 
-[![License](https://img.shields.io/github/license/comphy-lab/Basilisk-101)](https://github.com/comphy-lab/Basilisk-101/blob/main/LICENSE)
-[![Last Commit](https://img.shields.io/github/last-commit/comphy-lab/Basilisk-101)](https://github.com/comphy-lab/Basilisk-101/commits/main)
+[![Issues](https://img.shields.io/github/issues/comphy-lab/Taylor-Culick-SoapBubble)](https://github.com/comphy-lab/Taylor-Culick-SoapBubble/issues)
+[![License](https://img.shields.io/github/license/comphy-lab/Taylor-Culick-SoapBubble)](https://github.com/comphy-lab/Taylor-Culick-SoapBubble/blob/main/LICENSE)
+[![Last Commit](https://img.shields.io/github/last-commit/comphy-lab/Taylor-Culick-SoapBubble)](https://github.com/comphy-lab/Taylor-Culick-SoapBubble/commits/main)
 [![Basilisk](https://img.shields.io/badge/Basilisk-Compatible-green)](http://basilisk.fr/)
+[![Research](https://img.shields.io/badge/Research-Fluid%20Dynamics-blue)](https://comphy-lab.org)
+![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/comphy-lab/Taylor-Culick-SoapBubble?utm_source=oss&utm_medium=github&utm_campaign=comphy-lab%2FTaylor-Culick-SoapBubble&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
 
 High-fidelity simulations of soap bubble dynamics and wrinkling instabilities using Basilisk C.
 
@@ -42,7 +45,7 @@ The code models a soap bubble consisting of:
 │   ├── soapBubble-full.c: Full bubble simulation (spherical cap + rim)
 │   └── soapBubble-half.c: Half-bubble simulation variant
 ├── postProcess/: Post-processing and visualization tools
-│   ├── getData-generic.c: Field data extraction utility
+│   ├── getData.c: Field data extraction utility
 │   ├── getFacet.c: Interface facet extraction
 │   └── Video-generic.py: Animation generation script
 ├── basilisk/src/: Core Basilisk CFD library (reference only)
@@ -110,7 +113,7 @@ make soapBubble-full.tst
 cd postProcess
 
 # Compile data extraction tools
-qcc -autolink getData-generic.c -o getData-generic -lm
+qcc -autolink getData.c -o getData -lm
 qcc -autolink getFacet.c -o getFacet -lm
 
 # Generate animations
