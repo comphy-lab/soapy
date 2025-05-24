@@ -1,2 +1,0 @@
-export BASILISK=/Users/vatsal/Library/CloudStorage/Dropbox/Apps/gitHub/students-active/SOAPY/basilisk/src
-export PATH=$PATH:$BASILISK

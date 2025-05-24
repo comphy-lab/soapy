@@ -41,7 +41,7 @@ Extract facets from a saved simulation state.
 3. Output to stderr
 */
 int main(int a, char const *arguments[]) {
-  sprintf(filename, "%s", arguments[1]);
+  snprintf(filename, sizeof(filename), "%s", arguments[1]);
   restore(file = filename);
   
   FILE * fp = ferr;

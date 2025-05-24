@@ -57,7 +57,7 @@ int main(int a, char const *arguments[]) {
     return 1;
   }
 
-  sprintf(filename, "%s", arguments[1]);
+  snprintf(filename, sizeof(filename), "%s", arguments[1]);
   xmin = atof(arguments[2]); ymin = atof(arguments[3]);
   xmax = atof(arguments[4]); ymax = atof(arguments[5]);
   ny = atoi(arguments[6]);
