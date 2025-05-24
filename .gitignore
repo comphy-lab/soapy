@@ -92,12 +92,9 @@ deps/
 **/Video
 **/*.mp4
 **/*.bv
+**/display.html
+**/soapBubble
 # **/*.png
-
-# some ai files
-**/CLAUDE.md
-**/.windsurfrules
-**/.cursorrules
 
 # Custom executables
 **/1-conduction-simple

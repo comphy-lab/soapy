@@ -1,108 +1,168 @@
-/** Title: Encapsulation
-# Author: Vatsal Sanjay
-# vatsalsanjay@gmail.com
-# Physics of Fluids
+/**
+ * @file wrinkling_bub_axi_v1.c
+ * @author Saumili Jana (jsaumili@gmail.com)
+ * @date 18-10-2024
+ * Newtonian cases
+ * 
+ * Last update: Oct 28, 2024, Vatsal
+ * changelog: fixed the initial condition. 
+ * 
+ * Last update: Mar 6, 2025, Saumili
+ * Changelog: fixed boundary condition
+ * 
+ * Last update: Mar 15, 2025, Saumili
+ * Changelog: updated pressure boundary conditions
+ * 
+ * Last update: Mar 31, 2025, Saumili
+ *  Chhangelog: increased no of iterations for convergence
+ * 
+ *  * Last update: Apr 4, 2025, Saumili
+ *  Chhangelog: corrected pressure initial condition 
 */
 
-// 1 is Si Pool, 2 is Water Drop and 3 is air
-#include "axi.h"
+//f: 1 is liq, 0 is gas phase
+#include "axi.h" //remove for 3d case
 #include "navier-stokes/centered.h"
-#define FILTERED
+// #define FILTERED 1 // Smear density and viscosity jumps
 #include "two-phase.h"
+#include "navier-stokes/conserving.h"
 #include "tension.h"
-// #include "adapt_wavelet_limited.h"
-//
-// #define locRef 1e0
+#include "reduced.h"//gravity
 
-#define MAXlevel 10                                              // maximum level
-#define MINlevel 3                                              // maximum level
-#define tmax 100.0                                                 // maximum time
-#define tsnap (0.5)
-// Error tolerances
-#define fErr (1e-3)                                 // error tolerance in VOF
-#define KErr (1e-4)                                 // error tolerance in KAPPA
-#define VelErr (1e-2)                            // error tolerances in velocity
-#define OmegaErr (1e-2)                            // error tolerances in velocity
+// error tolerances //for AMR
+#define fErr (1e-3)
+#define VelErr (1e-3)
+#define KErr (1e-3)
+#define AErr (1e-3)
+#define MINlevel 2 
 
-#define h0 1e0
-#define Ohf 0.1  // 1 micros thickness water is order 0.1 Oh \sim h^(-1/2)
-#define Mus (1e-4)
-#define Rho31 1.0
+//time-intervals for saving
+#define tsnap (0.01)  //snapshot saving interval
 
-// density
-#define Rho1 (1.0)                                         // density of phase 1
-#define Rho3 Rho31                                         // density of phase 3
+/*Id1 :indicates the liquid film  media formimg the bubble
+Id2: indicates the surrounding gas/fluid(Newtonian)
+*/
+#define Rho21 (1e-3)
+//#define Mu21 (1e-2)
+//Calculations
+#define Xcent (0.0)
+#define Ycent (0.0)
 
-// viscosity
-#define Mu1 (Ohf)                            // Dynamic viscosity of phase 1
-#define Mu3 (Mus*Ohf)                       // Dynamic viscosity of phase 3
+#define R2circle(x,y) (sq(x - Xcent) + sq(y - Ycent))
 
-// domain
-#define Ldomain 100                            // Dimension of the domain
+//Boundary conditions
+//velocity //x-axis axisymmetric
+u.t[left] = dirichlet(0.0);//wall
+u.n[left] = dirichlet(0.0);//wall
+f[left] = neumann(0.0); // this sets the contact angle to 90 degrees.
 
-// boundary conditions
-u.n[right] = neumann(0.);
-p[right] = dirichlet(0.);
+u.t[right] = neumann(0.0);//outlow
+u.n[right] = neumann(0.0);//outflow
+//p[right] = neumann(0.0);//pressure outflow
+p[right] = dirichlet(0.0);
 
-int main(){
+u.t[top] = neumann(0.0);//outlow
+u.n[top] = neumann(0.0);//outflow
+//p[top] = neumann(0.0);//pressure outflow
+p[top] = dirichlet(0.0);
+
+//declarations
+int MAXlevel;
+double tmax, Oh1, Bo, Ldomain, k, h;
+
+int main(int argc, char const *argv[]){
+  //assignments
+  //NITERMAX = 500; //increased no of iterations for convergence during initial timesteps for some cases
+  MAXlevel = 8; //max possible grid res
+  tmax = 1.0;
+  Ldomain = 2.4;
+  
+
+  Bo = 1e-1; //gravity
+  Oh1 = 1e-2;//liq film Oh
+
+  k = 1e1; //curvature R/h
+
+  fprintf(ferr, "Level %d, tmax %g, Bo %g, Oh1 %3.2e, Lo %g\n", MAXlevel, tmax, Bo, Oh1, Ldomain);
+
   L0=Ldomain;
-  X0=-L0/2.0; Y0=0.;
-  init_grid (1 << (6));
-
+  X0=-1.0; Y0=0.;
+  init_grid (1 << (4));
   char comm[80];
   sprintf (comm, "mkdir -p intermediate");
   system(comm);
 
-  rho1 = Rho1; mu1 = Mu1;
-  rho2 = Rho3; mu2 = Mu3;
-
-  f.sigma = 1.0;
-
-  fprintf(ferr, "Level %d tmax %g. Ohf %3.2e, h0 %3.2e\n", MAXlevel, tmax, Ohf, h0);
+  rho1 = 1.0; rho2 = Rho21;
+  f.sigma = 1; //coeff of surface tension
+  mu1 = Oh1; mu2 = 1e-4;// mu2 = Mu21*Oh1;
+  G.x = -Bo; //gravity
   run();
 }
 
 
-
+//Initial condition// 
 event init(t = 0){
   if(!restore (file = "dump")){
-    /**
-    We can now initialize the volume fractions in the domain. */
-    refine(fabs(x)<1.02 && y < h0+1.02 && level<MAXlevel);
-    fraction(f, y < h0+1 ? 1-(sq(x)+sq(y-1-h0)) : 1-fabs(x));
-    f.prolongation = refine_bilinear;
-    boundary((scalar *){f});
+    float y_p, x_p, x1, x2;
+    h = 1/k;
+    y_p = 0.1;
+    x1 = sqrt(sq(1.0-h)-sq(y_p));
+    x2 = sqrt(1-sq(y_p));
+    x_p = (x1+x2)/2;
+
+
+    refine((R2circle(x,y) < 1.05) && (R2circle(x,y) > sq(0.98-h)) && (level < MAXlevel));
+
+    vertex scalar phi[];
+    foreach_vertex() {
+      if (y < y_p && x > 0.0) {
+        // Lower part - half circle
+        phi[] = (sq(h/2) - (sq(x - x_p) + sq(y - y_p)));
+      } else {
+        // Upper part - spherical rim
+        double r = sqrt(sq(x) + sq(y));
+        double shell = min(1. - r, (r - (1. - h)));
+        phi[] = shell;
+      }
+    }
+    fractions (phi, f);
+    //pressure initialize
+
+    foreach(){
+      //p[] = (R2circle(x,y)<1)?4:0; //initialize pressure
+      if ((R2circle(x,y)<sq(1.0-h)))
+      {  p[] = 4;
+      }
+      else if ((R2circle(x,y)<=1)&&((R2circle(x,y)>=sq(1.0-h))))
+      {
+         p[] = 2;
+      }
+      else
+      {
+        p[] = 0;
+      }
+      u.x[] = 0;
+      u.y[] = 0;
+    }
 
   }
 }
 
-// int refRegion(double x, double y, double z){
-//   return (x > 10 ? 0:
-//     x > 5 ? MAXlevel-4:
-//     y > 20 ? MAXlevel-4:
-//     y < 2*locRef ? MAXlevel+4:
-//     y < 4*locRef ? MAXlevel+2:
-//     MAXlevel
-//     );
-// }
-scalar KAPPA[], omega[];
-event adapt(i++) {
-  vorticity (u, omega);
+//AMR
+scalar KAPPA[];
+event adapt(i++){
   curvature(f, KAPPA);
-  foreach(){
-    omega[] *= f[];
-  }
-  boundary ((scalar *){omega, KAPPA});
-  // adapt_wavelet_limited ((scalar *){f, u.x, u.y, KAPPA, omega},
-  //   (double[]){fErr, VelErr, VelErr, KErr, OmegaErr},
-  //   refRegion, MINlevel);
-  adapt_wavelet((scalar *){f, u.x, u.y, KAPPA, omega},
-    (double[]){fErr, VelErr, VelErr, KErr, OmegaErr},
-    MAXlevel, MINlevel);
+  adapt_wavelet ((scalar *){f, u.x, u.y, KAPPA},
+    (double[]){fErr, VelErr, VelErr, KErr},
+    MAXlevel, MAXlevel-4);
+  //unrefine(x>150.0);
+
 }
 
-// Outputs
-event writingFiles (t = 0; t += tsnap; t <= tmax + tsnap) {
+//Outpts
+//static
+event writingFiles (t = 0, t += tsnap; t <= tmax) {
+  p.nodump = false; // dump pressure
   dump (file = "dump");
   char nameOut[80];
   sprintf (nameOut, "intermediate/snapshot-%5.4f", t);
@@ -110,21 +170,22 @@ event writingFiles (t = 0; t += tsnap; t <= tmax + tsnap) {
 }
 
 event logWriting (i++) {
-  double ke = 0.;
-  foreach (reduction(+:ke)){
-    ke += sq(Delta)*(sq(u.x[]) + sq(u.y[]))*rho(f[]);
-  }
+
   static FILE * fp;
-  if (i == 0) {
-    fprintf (ferr, "i dt t ke\n");
-    fp = fopen ("log", "w");
-    fprintf (fp, "i dt t ke\n");
-    fprintf (fp, "%d %g %g %g\n", i, dt, t, ke);
-    fclose(fp);
-  } else {
-    fp = fopen ("log", "a");
-    fprintf (fp, "%d %g %g %g\n", i, dt, t, ke);
-    fclose(fp);
+  if (pid() == 0){
+    if (i == 0) {
+      fprintf (ferr, "i dt t\n");
+      fp = fopen ("log", "w");
+      fprintf (fp, "Level %d, tmax %g, Oh %3.2e, Bo %2.1e, Lo %g\n", MAXlevel, tmax, Oh1, Bo, Ldomain);
+      fprintf (fp, "i dt t\n");
+      fprintf (fp, "%d %g %g \n", i, dt, t);
+      fclose(fp);
+    } else {
+      fp = fopen ("log", "a");
+      fprintf (fp, "%d %g %g\n", i, dt, t);
+      fclose(fp);
+    }
+    fprintf (ferr, "%d %g %g\n", i, dt, t);
   }
-  fprintf (ferr, "%d %g %g %g\n", i, dt, t, ke);
+
 }
