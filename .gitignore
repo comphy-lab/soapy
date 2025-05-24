@@ -93,7 +93,8 @@ deps/
 **/*.mp4
 **/*.bv
 **/display.html
-**/soapBubble
+**/soapBubble-full
+**/soapBubble-half
 # **/*.png
 
 # Custom executables

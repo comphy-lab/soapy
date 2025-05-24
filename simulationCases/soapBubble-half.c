@@ -69,7 +69,7 @@ These control the error thresholds for grid adaptation:
 - `R2circle`: Macro for computing squared radial distance
 */
 #define Rho21 (1e-3)
-#define Mu21 (1e-2)
+#define Mu21 (1e-3)
 
 #define Xcent (0.0)
 #define Ycent (0.0)
@@ -132,13 +132,22 @@ Initializes simulation parameters and launches the computation.
 */
 int main(int argc, char const *argv[]) {
   // Parameter assignments
-  MAXlevel = 8;
+  MAXlevel = 11;
   tmax = 1.0;
-  Ldomain = 2.5;
+  Ldomain = 5.0;
   
-  Oh1 = 4e-3;
-  k = 2e1;
-  Pe_gas = 1e0; // Peclet number based on diffusion coefficient of smoke in air.
+  Oh1 = 1e-3;
+  k = 2.5e1;
+  /**
+  Note on the Peclet number:
+  Peclet number based on diffusion coefficient of smoke in air. 
+  $$
+  Pe = \frac{V_\gamma R_0}{D}
+  $$
+  The inertio-capillary velocity is usuallly 0.1-1 m/s. Typical bubble radius is 1 mm.
+  The diffusion coefficient of smoke in air is 1e-4 to 1e-5 m^2/s.
+  */
+  Pe_gas = 1e-1; 
 
   fprintf(ferr, "Level %d, tmax %g, Oh1 %3.2e, Lo %g\n", 
           MAXlevel, tmax, Oh1, Ldomain);
@@ -158,8 +167,8 @@ int main(int argc, char const *argv[]) {
   f.sigma = 1.0;  // Surface tension coefficient
 
   // for smoke concentration T
-  T.D1 = 1e-3; // inverse Peclet number based on diffusion coefficient of smoke in water, $Pe_\text{water} \to \infty$.
-  T.D2 = 1.0/Pe_gas; // inverse Peclet number based on diffusion coefficient of smoke in air.
+  T.D1 = 1e-3/Pe_gas; // inverse Peclet number based on diffusion coefficient of smoke in water, $Pe_\text{water} \to \infty$.
+  T.D2 = 1e0/Pe_gas; // inverse Peclet number based on diffusion coefficient of smoke in air.
   T.alpha = 1e-3; // proportion of smoke in water right at the interface (this should be close to 0.).
 
   run();
@@ -207,11 +216,11 @@ event init(t = 0) {
       }
     }
     fractions(phi, f);
-    fraction(T, (sq(1.0 - h) - R2circle(x, y)));
+    fraction(T, (sq((1.0 - h)*0.5) - R2circle(x, y)));
 
     // Initialize pressure field based on region
     foreach() {
-      T[] *= (1e0/(sqrt(R2circle(x, y))+0.1))*0.1;
+      T[] *= 1e1;
       if (R2circle(x, y) < sq(1.0 - h)) {
         p[] = 2. + 2./(1.-h);  // Inner bubble pressure
       }
