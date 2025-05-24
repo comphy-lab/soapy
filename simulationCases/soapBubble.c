@@ -31,16 +31,14 @@ The simulation captures:
 - f = 0: Gas phase (surrounding medium)
 */
 
-#include "axi.h"  // Axisymmetric coordinate system
+#include "axi.h"
 #include "navier-stokes/centered.h"
-#define FILTERED 1
 #include "two-phase.h"
-scalar T[];
-scalar * tracers = {T};
 #include "navier-stokes/conserving.h"
 #include "tension.h"
-#include "reduced.h"  // For gravitational acceleration
+#include "henry.h"
 
+scalar T[], * stracers = {T};
 /**
 ## Simulation Parameters
 
@@ -65,11 +63,14 @@ These control the error thresholds for grid adaptation:
 
 /**
 ### Physical Properties
-- `Rho21`: Density ratio between gas and liquid phases (ρ₂/ρ₁)
+- `Rho21`: Density ratio between gas and liquid phases ($\rho_g/\rho_l$)
+- `Mu21`: Viscosity ratio between gas and liquid phases ($\mu_g/\mu_l$)
 - `Xcent`, `Ycent`: Center coordinates of the bubble
 - `R2circle`: Macro for computing squared radial distance
 */
 #define Rho21 (1e-3)
+#define Mu21 (1e-2)
+
 #define Xcent (0.0)
 #define Ycent (0.0)
 #define R2circle(x,y) (sq(x - Xcent) + sq(y - Ycent))
@@ -114,7 +115,7 @@ p[top] = dirichlet(0.0);
 - `h`: Film thickness
 */
 int MAXlevel;
-double tmax, Oh1, Bo, Ldomain, k, h;
+double tmax, Oh1, Pe_gas, Ldomain, k, h;
 
 /**
 ## Main Function
@@ -126,28 +127,25 @@ Initializes simulation parameters and launches the computation.
 - Maximum grid refinement level: 8
 - Simulation duration: 1.0 time units
 - Domain size: 2.4 units
-- Bond number: 0.1 (weak gravity effects)
 - Ohnesorge number: 0.01 (moderate viscous effects)
 - Curvature parameter: 10 (thin film approximation)
 */
 int main(int argc, char const *argv[]) {
   // Parameter assignments
-  MAXlevel = 9;
+  MAXlevel = 8;
   tmax = 1.0;
-  Ldomain = 2.4;
+  Ldomain = 2.5;
   
-  Bo = 1e-1;
-  Oh1 = 1e-2;
-  k = 1e1;
+  Oh1 = 4e-3;
+  k = 2e1;
+  Pe_gas = 1e0; // Peclet number based on diffusion coefficient of smoke in air.
 
-  fprintf(ferr, "Level %d, tmax %g, Bo %g, Oh1 %3.2e, Lo %g\n", 
-          MAXlevel, tmax, Bo, Oh1, Ldomain);
+  fprintf(ferr, "Level %d, tmax %g, Oh1 %3.2e, Lo %g\n", 
+          MAXlevel, tmax, Oh1, Ldomain);
 
   // Domain configuration
   L0 = Ldomain;
-  X0 = -1.01;
-  Y0 = 0.;
-  init_grid(1 << 4);
+  init_grid(1 << 6);
   
   // Create output directory
   char comm[80];
@@ -155,12 +153,14 @@ int main(int argc, char const *argv[]) {
   system(comm);
 
   // Physical properties assignment
-  rho1 = 1.0;
-  rho2 = Rho21;
-  f.sigma = 1;  // Surface tension coefficient
-  mu1 = Oh1;
-  mu2 = 1e-4;
-  G.x = -Bo;    // Gravitational acceleration
+  rho1 = 1.0; rho2 = Rho21;
+  mu1 = Oh1; mu2 = Mu21*Oh1;
+  f.sigma = 1.0;  // Surface tension coefficient
+
+  // for smoke concentration T
+  T.D1 = 1e-3; // inverse Peclet number based on diffusion coefficient of smoke in water, $Pe_\text{water} \to \infty$.
+  T.D2 = 1.0/Pe_gas; // inverse Peclet number based on diffusion coefficient of smoke in air.
+  T.alpha = 1e-3; // proportion of smoke in water right at the interface (this should be close to 0.).
 
   run();
 }
@@ -190,7 +190,7 @@ event init(t = 0) {
 
     // Adaptive refinement near interface
     refine((R2circle(x, y) < 1.05) && 
-           (R2circle(x, y) > sq(0.98 - h)) && 
+           (R2circle(x, y) > sq(0.025*(1.0 - h))) && 
            (level < MAXlevel));
 
     // Initialize level-set function for interface
@@ -207,11 +207,13 @@ event init(t = 0) {
       }
     }
     fractions(phi, f);
+    fraction(T, (sq(1.0 - h) - R2circle(x, y)));
 
     // Initialize pressure field based on region
     foreach() {
+      T[] *= (1e0/(sqrt(R2circle(x, y))+0.1))*0.1;
       if (R2circle(x, y) < sq(1.0 - h)) {
-        p[] = 4;  // Inner bubble pressure
+        p[] = 2. + 2./(1.-h);  // Inner bubble pressure
       }
       else if ((R2circle(x, y) <= 1) && 
                (R2circle(x, y) >= sq(1.0 - h))) {
@@ -223,9 +225,9 @@ event init(t = 0) {
       u.x[] = 0;
       u.y[] = 0;
     }
-    fraction(T, (sq(1.0 - h) - R2circle(x, y)));
   }
 }
+
 
 /**
 ## Adaptive Mesh Refinement Event
@@ -288,8 +290,8 @@ event logWriting(i++) {
     if (i == 0) {
       fprintf(ferr, "i dt t\n");
       fp = fopen("log", "w");
-      fprintf(fp, "Level %d, tmax %g, Oh %3.2e, Bo %2.1e, Lo %g\n", 
-              MAXlevel, tmax, Oh1, Bo, Ldomain);
+      fprintf(fp, "Level %d, tmax %g, Oh %3.2e, Lo %g\n", 
+              MAXlevel, tmax, Oh1, Ldomain);
       fprintf(fp, "i dt t\n");
       fprintf(fp, "%d %g %g \n", i, dt, t);
       fclose(fp);
