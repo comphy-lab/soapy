@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+  <!-- 
+    IMPORTANT: DO NOT place empty anchor tags <a></a> in this template!
+    They cause JavaScript syntax errors when they appear inside script blocks.
+  -->
+  <!-- Eliminate FOUC (Flash of Unstyled Content) and FOUT (Flash of Incorrect Theme) -->
+  <script src="./assets/js/theme-init.js"></script>
+
+
+  <!-- No-JS fallback for theme and critical theming styles -->
+  <link rel="stylesheet" href="./assets/css/theme-critical.css">
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="base-url" content="..">
+  <title>SOAPY - Simulation Of Axisymmetric Phenomena in bubblY films | SOAPY - Simulation Of Axisymmetric Phenomena in bubblY films</title>
+  
+  <!-- Critical CSS for fastest paint -->
+  <style>
+      .s-intro__title {
+          visibility: visible;
+          font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      }
+      .s-header {
+          visibility: visible;
+      }
+      
+      /* Ensure theme toggle properly styled immediately */
+      .theme-toggle {
+          background-color: var(--color-background);
+          color: var(--color-text);
+      }
+      
+      /* Control SVG visibility based on theme */
+      [data-theme="dark"] .theme-toggle-icon.sun,
+      :root:not([data-theme="dark"]) .theme-toggle-icon.moon {
+          display: block;
+      }
+      
+      [data-theme="dark"] .theme-toggle-icon.moon,
+      :root:not([data-theme="dark"]) .theme-toggle-icon.sun {
+          display: none;
+      }
+  </style>
+
+  <!-- Critical Meta Tags -->
+  <meta name="description" content="Computational fluid dynamics simulations using Basilisk C framework.">
+  <meta name="author" content="CoMPhy Lab">
+  <meta name="robots" content="index, follow">
+  <meta name="keywords" content="fluid dynamics, CFD, Basilisk, multiphase flow, computational physics">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="apple-mobile-web-app-title" content="CoMPhy Lab">
+
+  <!-- Preload critical resources -->
+  <link rel="preload" href="./assets/js/main.js" as="script">
+  <link rel="preload" href="./assets/css/fontello/css/fontello.css" as="style">
+  <link rel="preload" href="./assets/css/academicons-1.7.0/css/academicons.min.css" as="style">
+
+  <!-- Base stylesheets -->
+  <link rel="stylesheet" href="./assets/css/styles.css">
+  <link rel="stylesheet" href="./assets/css/custom_styles.css">
+  <link rel="stylesheet" href="./assets/css/command-palette.css">
+  <link rel="stylesheet" href="./assets/css/fontello/css/fontello.css">
+  <link rel="stylesheet" href="./assets/css/academicons-1.7.0/css/academicons.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+
+  <!-- Font optimization -->
+  <style>
+      @font-face {
+          font-display: swap;
+          font-family: 'System Font';
+          src: local('system-ui');
+      }
+  </style>
+
+  <!-- Favicon -->
+  <link rel="apple-touch-icon" sizes="180x180" href="./assets/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="./assets/favicon/favicon-96x96.png">
+  <link rel="icon" type="image/svg+xml" href="./assets/favicon/favicon.svg">
+  <link rel="shortcut icon" href="./assets/favicon/favicon.ico">
+  <link rel="manifest" href="./assets/favicon/site.webmanifest">
+
+  <!-- Scripts with proper loading attributes -->
+  <script src="./assets/js/jquery.min.js"></script>
+  <script src="./assets/js/jquery-ui.packed.js"></script>
+  <script src="./assets/js/plots.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2/dist/fuse.min.js"></script>
+  <!-- Config script must load before other scripts -->
+  <script src="./assets/js/config.js"></script>
+  <script defer src="./assets/js/html-sanitizer.js"></script>
+  <script defer src="./assets/js/search-helper.js"></script>
+  <script defer src="./assets/js/command-palette.js"></script>
+  <script defer src="./assets/js/command-data.js"></script>
+  <script defer src="./assets/js/main.js"></script>
+  <script defer src="./assets/js/theme-toggle.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script"></script>
+  
+  <!-- Optimize page load performance -->
+  <script>
+    // Preconnect to critical domains
+    const preconnectDomains = [
+      'https://cdnjs.cloudflare.com',
+      'https://cdn.jsdelivr.net'
+    ];
+    
+    preconnectDomains.forEach(domain => {
+      const link = document.createElement('link');
+      link.rel = 'preconnect';
+      link.href = domain;
+      link.crossOrigin = 'anonymous';
+      document.head.appendChild(link);
+      
+      // Also add DNS prefetch as fallback
+      const dnsLink = document.createElement('link');
+      dnsLink.rel = 'dns-prefetch';
+      dnsLink.href = domain;
+      document.head.appendChild(dnsLink);
+    });
+    
+    // Detect when document is fully loaded to remove preloader
+    window.addEventListener('load', function() {
+      const preloader = document.getElementById('preloader');
+      if (preloader) {
+        preloader.style.opacity = '0';
+        setTimeout(() => {
+          preloader.style.display = 'none';
+        }, 300); // Match transition duration
+      }
+    });
+  </script>
+
+  <script>
+      // Load Font Awesome with proper environment detection and fallbacks
+      function loadStylesheet(href) {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = href;
+        link.crossOrigin = 'anonymous';
+        link.onerror = (e) => {
+          console.error(`Failed to load stylesheet: `, e);
+          console.log('Trying alternative Font Awesome source...');
+        };
+        document.head.appendChild(link);
+        return link;
+      }
+      
+      // Check if we're on localhost
+      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        // Use hardcoded version numbers for reliable loading
+        
+        // Load Font Awesome using multiple CDNs to maximize reliability for local development
+        loadStylesheet('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css');
+        // Backup CDN if the first one fails
+        loadStylesheet('https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css');
+        // Final local fallback - ensures it will work on any localhost environment
+        loadStylesheet('https://use.fontawesome.com/releases/v6.7.2/css/all.css');
+      } else {
+        // Use Kit for production with defer
+        var script = document.createElement('script');
+        script.src = 'https://kit.fontawesome.com/b1cfd9ca75.js';
+        script.crossOrigin = 'anonymous';
+        script.defer = true;
+        document.head.appendChild(script);
+      }
+    </script>
+
+  <script>
+      // Mark page as JS-enabled and manage transitions
+      document.documentElement.classList.remove('no-js');
+      document.documentElement.classList.add('js');
+      
+      // Allow CSS transitions after initial load to prevent transition flashes
+      window.addEventListener('DOMContentLoaded', () => {
+          setTimeout(() => {
+              document.documentElement.classList.add('transitions-enabled');
+          }, 100); // Short delay to ensure DOM is ready
+      });
+  </script>
+</head>
+<body id="top">
+<script>window.repoName = "SOAPY";</script>
+
+
+    <!-- Preloader with theme variables applied -->
+    <div id="preloader">
+        <div id="loader"></div>
+    </div>
+
+    <noscript>
+        <div class="noscript-warning">
+            <p>This site works best with JavaScript enabled. Some features may be limited.</p>
+        </div>
+    </noscript>
+
+    <div id="page" class="s-pagewrap">
+        <header class="s-header">
+            <div class="s-header__logo">
+                <a class="logo" href="/">
+                    <img src="./assets/logos/CoMPhy-Lab-no-name.png" alt="CoMPhy Lab">
+                </a>
+                <a class="documentation-button" href="/SOAPY">
+                    <i class="fa-solid fa-book-open"></i>
+                    <span>SOAPY</span>
+                </a>
+            </div>
+            <a class="s-header__menu-toggle" href="#0">
+                <span class="s-header__menu-text">Menu</span>
+                <span class="s-header__menu-icon"></span>
+            </a>
+            <nav class="s-header__nav">
+                <a href="#0" class="s-header__nav-close-btn"><span>Close</span></a>
+                <ul class="s-header__nav-list">
+                    <li style="background: none;">
+                        <!-- JS theme toggle -->
+                        <div class="theme-toggle js-only" id="theme-toggle" aria-label="Toggle dark/light theme">
+                            <svg class="theme-toggle-icon moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                            </svg>
+                            <svg class="theme-toggle-icon sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="5"></circle>
+                                <line x1="12" y1="1" x2="12" y2="3"></line>
+                                <line x1="12" y1="21" x2="12" y2="23"></line>
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                                <line x1="1" y1="12" x2="3" y2="12"></line>
+                                <line x1="21" y1="12" x2="23" y2="12"></line>
+                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                            </svg>
+                        </div>
+                    </li>
+                    <li style="background: none;"><a href="https://scholar.google.com/citations?user=tHb_qZoAAAAJ&hl=en" style="background: none; padding: 0;" aria-label="Google Scholar Profile"><i class="ai ai-google-scholar" style="font-size: 1.75em;"></i></a></li>
+                    <li style="background: none;"><a href="https://github.com/comphy-lab" style="background: none; padding: 0;" aria-label="GitHub Organization"><i class="fa-brands fa-github" style="font-size: 1.75em"></i></a></li>
+                    <li><a href="https://comphy-lab.org/#about" class="smoothscroll">About</a></li>
+                    <li><a href="https://comphy-lab.org/team/">Team</a></li>
+                    <li><a href="https://comphy-lab.org/research">Research</a></li>
+                    <li><a href="https://comphy-lab.org/teaching">Teaching</a></li>
+                    <li><a href="https://comphy-lab.org/join">Join Us</a></li>
+                    <li><a href="https://blogs.comphy-lab.org/">Blog</a></li>
+                    <li style="background: none;"><a href="https://bsky.app/profile/comphy-lab.org" style="background: none; padding: 0;" aria-label="Bluesky Profile"><i class="fa-brands fa-bluesky" style="font-size: 1.75em; color: #0085ff;"></i></a></li>
+                    <!-- Command Palette Button (Styled like search) -->
+                    <li class="command-palette-button">
+                        <div class="command-wrapper">
+                            <button class="command-k-style-btn" id="command-palette-btn" aria-label="Open command palette">
+                                <span class="default-theme-text">ctrl K</span>
+                                <span class="mac-theme-text">⌘ K</span>
+                                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                            </button>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+
+        <!-- Main content -->
+        <main class="content">
+            
+            <div class="page-content">
+                
+                                
+                                
+                
+                <h1
+                id="soapy---simulation-of-axisymmetric-phenomena-in-bubbly-films">SOAPY
+                - Simulation Of Axisymmetric Phenomena in bubblY
+                films</h1>
+                <p><a
+                href="https://github.com/comphy-lab/SOAPY/issues"><img
+                src="https://img.shields.io/github/issues/comphy-lab/SOAPY"
+                alt="Issues" /></a> <a
+                href="https://github.com/comphy-lab/SOAPY/blob/main/LICENSE"><img
+                src="https://img.shields.io/github/license/comphy-lab/SOAPY"
+                alt="License" /></a> <a
+                href="https://github.com/comphy-lab/SOAPY/commits/main"><img
+                src="https://img.shields.io/github/last-commit/comphy-lab/SOAPY"
+                alt="Last Commit" /></a> <a
+                href="http://basilisk.fr/"><img
+                src="https://img.shields.io/badge/Basilisk-Compatible-green"
+                alt="Basilisk" /></a> <a
+                href="https://comphy-lab.org"><img
+                src="https://img.shields.io/badge/Research-Fluid%20Dynamics-blue"
+                alt="Research" /></a> <img
+                src="https://img.shields.io/coderabbit/prs/github/comphy-lab/SOAPY?utm_source=oss&amp;utm_medium=github&amp;utm_campaign=comphy-lab%2FSOAPY&amp;labelColor=171717&amp;color=FF570A&amp;link=https%3A%2F%2Fcoderabbit.ai&amp;label=CodeRabbit+Reviews"
+                alt="CodeRabbit Pull Request Reviews" /></p>
+                <p><strong>S</strong>imulation <strong>O</strong>f
+                <strong>A</strong>xisymmetric <strong>P</strong>henomena
+                in bubbl<strong>Y</strong> films</p>
+                <p>High-fidelity simulations of soap bubble dynamics and
+                wrinkling instabilities using Basilisk C.</p>
+                <h2 id="research-overview">Research Overview</h2>
+                <p>This repository contains computational tools for
+                studying the dynamics of thin liquid films forming
+                bubbles, with a focus on wrinkling instabilities driven
+                by surface tension and viscous effects. The simulations
+                solve the two-phase Navier-Stokes equations in
+                axisymmetric configurations, capturing the complex
+                interplay between:</p>
+                <ul>
+                <li><strong>Surface tension-driven dynamics</strong> at
+                the liquid-gas interface</li>
+                <li><strong>Viscous dissipation</strong> within the thin
+                film</li>
+                <li><strong>Gravitational effects</strong> characterized
+                by the Bond number</li>
+                <li><strong>Film thickness variations</strong> leading
+                to instability formation</li>
+                </ul>
+                <h3 id="physical-system">Physical System</h3>
+                <p>The code models a soap bubble consisting of: - A thin
+                liquid film (water with surfactants) - Surrounding gas
+                phase (air) - Interface dynamics tracked using
+                Volume-of-Fluid (VOF) method - Smoke tracer diffusion
+                for flow visualization</p>
+                <h3 id="key-dimensionless-parameters">Key Dimensionless
+                Parameters</h3>
+                <ul>
+                <li><strong>Ohnesorge number (Oh)</strong>: Ratio of
+                viscous to inertio-capillary forces <span
+                class="math display">\[\text{Oh} =
+                \frac{\mu}{\sqrt{\rho\sigma R}}\]</span></li>
+                <li><strong>Bond number (Bo)</strong>: Ratio of
+                gravitational to surface tension forces <span
+                class="math display">\[\text{Bo} = \frac{\rho g
+                R^2}{\sigma}\]</span></li>
+                <li><strong>Péclet number (Pe)</strong>: Ratio of
+                advective to diffusive transport <span
+                class="math display">\[\text{Pe} = \frac{V_\gamma
+                R}{D}\]</span> where <span
+                class="math inline">\(V_\gamma\)</span> is the
+                inertio-capillary velocity</li>
+                <li><strong>Curvature parameter (k)</strong>: Ratio of
+                bubble radius to film thickness <span
+                class="math display">\[k = \frac{R}{h}\]</span></li>
+                </ul>
+                <h2 id="repository-structure">Repository Structure</h2>
+                <div class="repository-structure">
+                <ul>
+                <li><strong>basilisk/src/</strong> - Core Basilisk CFD
+                library (reference only, do not modify)</li>
+                <li><strong><a
+                href="simulationCases">simulationCases/</a></strong> -
+                Test cases for simulation
+                <ul>
+                <li><strong><a
+                href="simulationCases/soapBubble-full.c.html">soapBubble-full.c</a></strong>
+                - Full bubble simulation (spherical cap + rim)</li>
+                <li><strong><a
+                href="simulationCases/soapBubble-half.c.html">soapBubble-half.c</a></strong>
+                - Half-bubble simulation variant</li>
+                </ul></li>
+                <li><strong><a
+                href="postProcess">postProcess/</a></strong> -
+                Project-specific post-processing tools
+                <ul>
+                <li><strong><a
+                href="postProcess/getData.c.html">getData.c</a></strong>
+                - Data extraction utility</li>
+                <li><strong><a
+                href="postProcess/getFacet.c.html">getFacet.c</a></strong>
+                - Interface facet extraction</li>
+                <li><strong><a
+                href="postProcess/Video-generic.py.html">Video-generic.py</a></strong>
+                - Python script for post-processing</li>
+                </ul></li>
+                </ul>
+                </div>
+                <h2 id="simulation-configurations">Simulation
+                Configurations</h2>
+                <h3 id="full-bubble-simulation-soapbubble-full.c">Full
+                Bubble Simulation (<code>soapBubble-full.c</code>)</h3>
+                <p>Models a complete bubble with: - Lower hemisphere:
+                Circular cap geometry - Upper region: Spherical rim
+                structure - Initial film thickness: <span
+                class="math inline">\(h = 1/k\)</span> - Adaptive mesh
+                refinement near interfaces</p>
+                <h3 id="half-bubble-simulation-soapbubble-half.c">Half
+                Bubble Simulation (<code>soapBubble-half.c</code>)</h3>
+                <p>Variant configuration for studying partial bubble
+                dynamics with modified boundary conditions.</p>
+                <h2 id="physical-parameters-used">Physical Parameters
+                Used</h2>
+                <table>
+                <colgroup>
+                <col style="width: 23%" />
+                <col style="width: 17%" />
+                <col style="width: 31%" />
+                <col style="width: 27%" />
+                </colgroup>
+                <thead>
+                <tr>
+                <th>Parameter</th>
+                <th>Symbol</th>
+                <th>Typical Value</th>
+                <th>Description</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                <td>Ohnesorge number</td>
+                <td><span class="math inline">\(\text{Oh}\)</span></td>
+                <td><span class="math inline">\(10^{-3}\)</span></td>
+                <td>Viscous effects</td>
+                </tr>
+                <tr>
+                <td>Density ratio</td>
+                <td><span
+                class="math inline">\(\rho_2/\rho_1\)</span></td>
+                <td><span class="math inline">\(10^{-3}\)</span></td>
+                <td>Gas/liquid density</td>
+                </tr>
+                <tr>
+                <td>Viscosity ratio</td>
+                <td><span
+                class="math inline">\(\mu_2/\mu_1\)</span></td>
+                <td><span class="math inline">\(10^{-3}\)</span></td>
+                <td>Gas/liquid viscosity</td>
+                </tr>
+                <tr>
+                <td>Curvature parameter</td>
+                <td><span class="math inline">\(k\)</span></td>
+                <td>25</td>
+                <td><span class="math inline">\(R/h\)</span> ratio</td>
+                </tr>
+                <tr>
+                <td>Péclet number (gas)</td>
+                <td><span
+                class="math inline">\(\text{Pe}_{\text{gas}}\)</span></td>
+                <td><span class="math inline">\(10^{-1}\)</span></td>
+                <td>Smoke diffusion</td>
+                </tr>
+                <tr>
+                <td>Domain size</td>
+                <td><span class="math inline">\(L\)</span></td>
+                <td>5.0</td>
+                <td>Computational domain</td>
+                </tr>
+                </tbody>
+                </table>
+                <h2 id="installation-and-usage">Installation and
+                Usage</h2>
+                <h3 id="prerequisites">Prerequisites</h3>
+                <ul>
+                <li>C99-compliant compiler (gcc or clang)</li>
+                <li>GNU make</li>
+                <li>Python 3+ with matplotlib, numpy for
+                post-processing</li>
+                </ul>
+                <h3 id="quick-setup">Quick Setup</h3>
+                <div class="code-block-container"><div class="code-block-container"><pre
+                class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Clone repository</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone git@github.com:comphy-lab/soapy.git</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> soapy</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Install Basilisk locally</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">./reset_install_requirements.sh</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> .project_config</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Compile simulations</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> simulationCases</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> soapBubble-full.tst</span></code></pre></div></div>
+                <h3 id="running-simulations">Running Simulations</h3>
+                <div class="code-block-container"><div class="code-block-container"><pre
+                class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run full bubble simulation</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">./soapBubble-full.tst</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Run with custom parameters (edit source file for parameter changes)</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Key parameters: Oh1, k, tmax, MAXlevel</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Output files are saved in intermediate/ directory</span></span></code></pre></div></div>
+                <h3 id="post-processing">Post-Processing</h3>
+                <div class="code-block-container"><div class="code-block-container"><pre
+                class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> postProcess</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Compile data extraction tools</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="ex">qcc</span> <span class="at">-autolink</span> getData.c <span class="at">-o</span> getData <span class="at">-lm</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="ex">qcc</span> <span class="at">-autolink</span> getFacet.c <span class="at">-o</span> getFacet <span class="at">-lm</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate animations</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> Video-generic.py <span class="at">--case</span> ../simulationCases <span class="at">--folder</span> output_frames</span></code></pre></div></div>
+                <h2 id="output-data">Output Data</h2>
+                <p>The simulations generate: - <strong>Snapshot
+                files</strong>: Binary dumps at regular intervals (<span
+                class="math inline">\(\Delta t = 0.01\)</span>) -
+                <strong>Interface data</strong>: VOF field and curvature
+                information - <strong>Velocity fields</strong>: Full
+                velocity components in axisymmetric coordinates -
+                <strong>Tracer concentration</strong>: Smoke diffusion
+                patterns - <strong>Pressure fields</strong>: Dynamic
+                pressure evolution</p>
+                <h2 id="scientific-background">Scientific
+                Background</h2>
+                <p>The simulations investigate the Taylor-Culick
+                instability in soap bubbles, where:</p>
+                <ul>
+                <li><strong>Thin film dynamics</strong>: The bubble
+                consists of a liquid film of thickness <span
+                class="math inline">\(h \ll R\)</span> (bubble
+                radius)</li>
+                <li><strong>Wrinkling mechanism</strong>: Instabilities
+                arise from the competition between surface tension and
+                viscous forces</li>
+                <li><strong>Rim formation</strong>: The bubble edge
+                develops a toroidal rim structure that influences
+                stability</li>
+                <li><strong>Drainage patterns</strong>: Gravity and
+                capillary forces create complex flow patterns within the
+                film</li>
+                </ul>
+                <h3 id="relevant-physics">Relevant Physics</h3>
+                <ul>
+                <li><strong>Taylor-Culick velocity</strong>:
+                Characteristic retraction speed <span
+                class="math display">\[V_{\text{TC}} =
+                \sqrt{\frac{2\sigma}{\rho h}}\]</span></li>
+                <li><strong>Rayleigh-Plateau instability</strong>:
+                Drives rim breakup and droplet formation</li>
+                <li><strong>Marangoni effects</strong>: Surface tension
+                gradients due to surfactant concentration</li>
+                <li><strong>Film thinning</strong>: Coupled drainage and
+                evaporation processes</li>
+                </ul>
+                <h2 id="numerical-methods">Numerical Methods</h2>
+                <p>The code employs:</p>
+                <ul>
+                <li><strong>Volume-of-Fluid (VOF)</strong> method for
+                interface tracking</li>
+                <li><strong>Adaptive mesh refinement</strong> (AMR) for
+                resolving thin films</li>
+                <li><strong>Implicit viscous solver</strong> for
+                stability at low Oh numbers</li>
+                <li><strong>Conservative momentum advection</strong> for
+                accurate interface dynamics</li>
+                <li><strong>Height-function curvature</strong>
+                computation for surface tension</li>
+                </ul>
+                <h2 id="contributing">Contributing</h2>
+                <p>This code is part of ongoing research. For
+                collaborations or questions:</p>
+                <ul>
+                <li>Open an issue for bug reports or feature
+                requests</li>
+                <li>Contact the authors for research collaborations</li>
+                <li>See CLAUDE.md for code style guidelines</li>
+                </ul>
+                <h2 id="authors">Authors</h2>
+                <ul>
+                <li><strong>Saumili Jana</strong> - Primary developer
+                (<a href="mailto:jsaumili@gmail.com"
+                class="email">jsaumili@gmail.com</a>)</li>
+                <li><strong>Vatsal Sanjay</strong> - <a
+                href="mailto:vatsalsy@comphy-lab.org">vatsalsy@comphy-lab.org</a></li>
+                </ul>
+                <h2 id="license">License</h2>
+                <p>This project is licensed under the GNU General Public
+                License v3.0 - see the LICENSE file for details.</p>
+                <h2 id="generated-documentation">Generated
+                Documentation</h2>
+                <h3 id="root-directory">Root Directory</h3>
+                <ul>
+                <li><a
+                href="reset_install_requirements.sh.html">reset_install_requirements.sh</a></li>
+                </ul>
+                <h3 id="postprocess">postProcess</h3>
+                <ul>
+                <li><a
+                href="postProcess/Video-generic.py.html">postProcess/Video-generic.py</a></li>
+                <li><a
+                href="postProcess/getData.c.html">postProcess/getData.c</a></li>
+                <li><a
+                href="postProcess/getFacet.c.html">postProcess/getFacet.c</a></li>
+                </ul>
+                <h3 id="simulationcases">simulationCases</h3>
+                <ul>
+                <li><a
+                href="simulationCases/Makefile.html">simulationCases/Makefile</a></li>
+                <li><a
+                href="simulationCases/cleanup.sh.html">simulationCases/cleanup.sh</a></li>
+                <li><a
+                href="simulationCases/runCases.sh.html">simulationCases/runCases.sh</a></li>
+                <li><a
+                href="simulationCases/soapBubble-full.c.html">simulationCases/soapBubble-full.c</a></li>
+                <li><a
+                href="simulationCases/soapBubble-half.c.html">simulationCases/soapBubble-half.c</a></li>
+                </ul>
+            </div>
+        </main>
+
+        <footer class="site-footer">
+            <div class="footer-left">
+              <a href="http://basilisk.fr/sandbox/vatsal/" target="_blank" rel="noopener noreferrer">
+                <img src="./assets/logos/logoBasilisk_TransparentBackground.png" alt="Basilisk C" class="footer-logo">
+              </a>
+              <a href="https://pof.tnw.utwente.nl/" target="_blank" rel="noopener noreferrer">
+                <img src="./assets/logos/LogoPof_transparent_white.png" alt="Physics of Fluids" class="footer-logo pof-logo">
+              </a>
+              <a href="https://www.utwente.nl/" target="_blank" rel="noopener noreferrer">
+                <img src="./assets/logos/UT_Logo_2400_Sta_White_EN.png" alt="University of Twente" class="footer-logo">
+              </a>
+              <a href="https://www.vatsalsanjay.com/" target="_blank" rel="noopener noreferrer">
+                <img src="./assets/logos/Logo_Vatsal_v3_OutLine.png" alt="Vatsal Sanjay" class="footer-logo">
+              </a>
+            </div>
+            <div class="footer-center">
+              <p class="copyright-text">
+                &copy; Copyright<br>
+                CoMPhy Lab 2025
+              </p>
+            </div>
+            <div class="footer-right">
+              <a href="https://scholar.google.com/citations?user=tHb_qZoAAAAJ&hl=en" target="_blank" rel="noopener noreferrer" aria-label="Google Scholar Profile">
+                <i class="ai ai-google-scholar" style="font-size: 2.5em; color: white;"></i>
+              </a>
+              <a href="https://github.com/comphy-lab" target="_blank" rel="noopener noreferrer" aria-label="GitHub Organization">
+                <i class="fa-brands fa-github" style="font-size: 2.5em; color: white;"></i>
+              </a>
+              <a href="https://www.youtube.com/@CoMPhyLab" target="_blank" rel="noopener noreferrer" aria-label="YouTube Channel">
+                <i class="fa-brands fa-youtube" style="font-size: 2.5em; color: white;"></i>
+              </a>
+              <a href="https://x.com/VatsalSanjay" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter) Profile">
+                <i class="fa-brands fa-x-twitter" style="font-size: 2.5em; color: white;"></i>
+              </a>
+              <a href="https://bsky.app/profile/comphy-lab.org" target="_blank" rel="noopener noreferrer" aria-label="Bluesky Profile">
+                <i class="fa-brands fa-bluesky" style="font-size: 2.5em; color: white;"></i>
+              </a>
+              <a href="https://github.com/comphy-lab/SOAPY" class="edit-link" aria-label="Edit this page on GitHub">
+                <i class="fa-brands fa-github"></i> Edit this page
+              </a>
+            </div>
+          </footer>
+    </div>  
+
+    <!-- Command Palette -->
+    <div id="simple-command-palette" class="simple-command-palette" style="display: none;">
+        <div class="simple-command-palette-backdrop"></div>
+        <div class="simple-command-palette-modal">
+            <input type="text" id="command-palette-input" placeholder="Type a command..." autocomplete="off">
+            <div id="command-palette-results" class="command-palette-results"></div>
+            <div class="command-palette-footer">
+                <span class="command-palette-footer-item"><kbd>↑</kbd> <kbd>↓</kbd> to navigate</span>
+                <span class="command-palette-footer-item"><kbd>enter</kbd> to select</span>
+                <span class="command-palette-footer-item"><kbd>esc</kbd> to close</span>
+            </div>
+        </div>
+    </div>
+
+
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', function() {
+    // Add copy button to each code block container
+    const codeBlocks = document.querySelectorAll('.code-block-container pre');
+    codeBlocks.forEach(function(codeBlock, index) {
+        // Create button element
+        const button = document.createElement('button');
+        button.className = 'copy-button';
+        button.textContent = 'Copy';
+        button.setAttribute('aria-label', 'Copy code to clipboard');
+        button.setAttribute('data-copy-state', 'copy');
+        
+        // Get the code block container (parent of the pre)
+        const container = codeBlock.parentNode;
+        
+        // Add the button to the container
+        container.appendChild(button);
+        
+        // Set up click event
+        button.addEventListener('click', async function() {
+            const codeText = codeBlock.textContent;
+            
+            try {
+                // Try to use the modern clipboard API first
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    await navigator.clipboard.writeText(codeText);
+                    updateButtonState(button, 'success');
+                } else {
+                    // Fall back to the deprecated execCommand method
+                    const textarea = document.createElement('textarea');
+                    textarea.value = codeText;
+                    textarea.style.position = 'fixed';  // Prevent scrolling to the bottom
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    
+                    const successful = document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                    
+                    if (successful) {
+                        updateButtonState(button, 'success');
+                    } else {
+                        updateButtonState(button, 'error');
+                    }
+                }
+            } catch (err) {
+                console.error('Copy failed:', err);
+                updateButtonState(button, 'error');
+            }
+        });
+    });
+    
+    // Function to update button state
+    function updateButtonState(button, state) {
+        if (state === 'success') {
+            button.textContent = 'Copied!';
+            button.classList.add('copied');
+        } else if (state === 'error') {
+            button.textContent = 'Error!';
+            button.classList.add('error');
+        }
+        
+        // Reset button state after 2 seconds
+        setTimeout(function() {
+            button.textContent = 'Copy';
+            button.classList.remove('copied', 'error');
+        }, 2000);
+    }
+});
+</script>
+        </body>
+</html>

@@ -159,7 +159,7 @@ int main(int argc, char const *argv[]) {
   
   // Create output directory
   char comm[80];
-  sprintf(comm, "mkdir -p intermediate");
+  snprintf(comm, sizeof(comm), "mkdir -p intermediate");
   system(comm);
 
   // Physical properties assignment
@@ -277,7 +277,7 @@ event writingFiles(t = 0, t += tsnap; t <= tmax) {
   dump(file = "dump");
   
   char nameOut[80];
-  sprintf(nameOut, "intermediate/snapshot-%5.4f", t);
+  snprintf(nameOut, sizeof(nameOut), "intermediate/snapshot-%5.4f", t);
   dump(file = nameOut);
 }
 

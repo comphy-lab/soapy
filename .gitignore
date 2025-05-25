@@ -1,3 +1,4 @@
+.project_config
 # OS generated files
 .DS_Store
 ._*
@@ -72,7 +73,7 @@ obj/
 deps/
 
 # Project specific files
-# **/_darcs
+**/_darcs
 **/intermediate*
 **/log*.dat
 **/restart*
