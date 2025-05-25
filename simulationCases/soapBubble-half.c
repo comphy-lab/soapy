@@ -84,7 +84,7 @@ These control the error thresholds for grid adaptation:
 */
 u.t[left] = dirichlet(0.0);
 u.n[left] = dirichlet(0.0);
-f[left] = dirichlet(0.0);
+f[left] = neumann(0.0);
 
 /**
 ### Right Boundary (Outflow)
