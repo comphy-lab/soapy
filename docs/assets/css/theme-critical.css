@@ -1,0 +1,159 @@
+/**
+ * Critical Theme CSS
+ * ==================
+ * 
+ * This file contains critical CSS for theme management that needs to be loaded
+ * as early as possible to prevent FOUC and ensure proper theming.
+ * 
+ * Features:
+ * - CSS custom properties for light/dark themes
+ * - No-JS fallbacks using prefers-color-scheme
+ * - Transition prevention during initial load
+ * - Early element styling for preloader and theme toggle
+ * 
+ * Author: SOAPY Documentation System
+ * Updated: 2025-01-25
+ */
+
+/* Default light theme variables */
+:root {
+  /* Base colors */
+  --color-background: #fff;
+  --color-text: #333;
+  --color-primary: #0066cc;
+  --color-secondary: #036;
+  --color-accent: #0099ff;
+  
+  /* UI elements */
+  --color-header-bg: #f5f5f5;
+  --color-footer-bg: #2d2e33;
+  --color-border: #e0e0e0;
+  --color-input-bg: #f9f9f9;
+  
+  /* Component colors */
+  --color-preloader-bg: #ffffff;
+  --color-loader: #0066cc;
+  --color-card-bg: #ffffff;
+  --color-code-bg: #f5f5f5;
+}
+
+/* Dark theme variables applied via media query when JS is disabled */
+@media (prefers-color-scheme: dark) {
+  :root:not(.theme-set) {
+    /* Base colors - dark mode */
+    --color-background: #1a1a1a;
+    --color-text: #f5f5f5;
+    --color-primary: #4d9fff;
+    --color-secondary: #88ccff;
+    --color-accent: #00bfff;
+    
+    /* UI elements - dark mode */
+    --color-header-bg: #121212;
+    --color-footer-bg: #121212;
+    --color-border: #333;
+    --color-input-bg: #2d2d2d;
+    
+    /* Component colors - dark mode */
+    --color-preloader-bg: #1a1a1a;
+    --color-loader: #4d9fff;
+    --color-card-bg: #222;
+    --color-code-bg: #2d2d2d;
+  }
+}
+
+/* When JS sets the theme explicitly via data attribute */
+[data-theme="dark"] {
+  /* Base colors - dark mode */
+  --color-background: #1a1a1a;
+  --color-text: #f5f5f5;
+  --color-primary: #4d9fff;
+  --color-secondary: #88ccff;
+  --color-accent: #00bfff;
+  
+  /* UI elements - dark mode */
+  --color-header-bg: #121212;
+  --color-footer-bg: #121212;
+  --color-border: #333;
+  --color-input-bg: #2d2d2d;
+  
+  /* Component colors - dark mode */
+  --color-preloader-bg: #1a1a1a;
+  --color-loader: #4d9fff;
+  --color-card-bg: #222;
+  --color-code-bg: #2d2d2d;
+}
+
+/* Prevent transition flashes during initial load */
+html:not(.transitions-enabled) * {
+  transition: none !important;
+}
+
+/* Apply theme to preloader and early elements */
+#preloader {
+  background-color: var(--color-preloader-bg);
+  color: var(--color-text);
+}
+
+#loader {
+  border-color: var(--color-loader);
+  border-top-color: transparent;
+}
+
+/* Noscript warning */
+.noscript-warning {
+  background-color: var(--color-primary);
+  color: white;
+  text-align: center;
+  padding: 10px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+/* Theme indicator for no-JS */
+.theme-indicator {
+  padding: 5px 10px;
+  border-radius: 4px;
+  background-color: var(--color-input-bg);
+  color: var(--color-text);
+  text-align: center;
+}
+
+/* Hide JS-only elements when no JS */
+.no-js .js-only {
+  display: none !important;
+}
+
+/* Show no-JS alternatives */
+.js .no-js-only {
+  display: none !important;
+}
+
+/* Critical styles for immediate rendering */
+.s-intro__title {
+  visibility: visible;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.s-header {
+  visibility: visible;
+}
+
+/* Ensure theme toggle properly styled immediately */
+.theme-toggle {
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
+
+/* Control SVG visibility based on theme */
+[data-theme="dark"] .theme-toggle-icon.sun,
+:root:not([data-theme="dark"]) .theme-toggle-icon.moon {
+  display: block;
+}
+
+[data-theme="dark"] .theme-toggle-icon.moon,
+:root:not([data-theme="dark"]) .theme-toggle-icon.sun {
+  display: none;
+}

@@ -6,167 +6,11 @@
     They cause JavaScript syntax errors when they appear inside script blocks.
   -->
   <!-- Eliminate FOUC (Flash of Unstyled Content) and FOUT (Flash of Incorrect Theme) -->
-  <script>
-    (function() {
-  try {
-    // Apply the theme as quickly as possible to avoid flash
-    let saved;
-    try {
-      saved = localStorage.getItem('theme');
-    } catch (storageError) {
-      // Handle localStorage access errors (private browsing, cookies disabled)
-      console.warn('Unable to access localStorage:', storageError);
-    }
-
-    let prefersDark = false;
-    try {
-      prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    } catch (mediaError) {
-      // Handle matchMedia access errors (unsupported browsers)
-      console.warn('Unable to check media query:', mediaError);
-    }
-
-    const theme = saved ? saved : (prefersDark ? 'dark' : 'light');
-    document.documentElement.setAttribute('data-theme', theme);
-    // Add theme class for CSS targeting
-    document.documentElement.classList.add(theme + '-theme');
-    // Mark when theme is set for CSS transitions
-    document.documentElement.classList.add('theme-set');
-  } catch (error) {
-    // Fallback for any other unexpected errors
-    console.warn('Theme initialization failed:', error);
-    // Apply default theme as fallback
-    try {
-      document.documentElement.setAttribute('data-theme', 'light');
-      document.documentElement.classList.add('light-theme');
-      document.documentElement.classList.add('theme-set');
-    } catch (fallbackError) {
-      // Silent catch for extreme cases
-      console.error('Critical theme fallback failed:', fallbackError);
-    }
-  }
-})();
-  </script>
+  <script src="../assets/js/theme-init.js"></script>
 
 
   <!-- No-JS fallback for theme and critical theming styles -->
-  <style>
-    /* Default light theme variables */
-    :root {
-      /* Base colors */
-      --color-background: #fff;
-      --color-text: #333;
-      --color-primary: #0066cc;
-      --color-secondary: #036;
-      --color-accent: #0099ff;
-      
-      /* UI elements */
-      --color-header-bg: #f5f5f5;
-      --color-footer-bg: #2d2e33;
-      --color-border: #e0e0e0;
-      --color-input-bg: #f9f9f9;
-      
-      /* Component colors */
-      --color-preloader-bg: #ffffff;
-      --color-loader: #0066cc;
-      --color-card-bg: #ffffff;
-      --color-code-bg: #f5f5f5;
-    }
-    
-    /* Dark theme variables applied via media query when JS is disabled */
-    @media (prefers-color-scheme: dark) {
-      :root:not(.theme-set) {
-        /* Base colors - dark mode */
-        --color-background: #1a1a1a;
-        --color-text: #f5f5f5;
-        --color-primary: #4d9fff;
-        --color-secondary: #88ccff;
-        --color-accent: #00bfff;
-        
-        /* UI elements - dark mode */
-        --color-header-bg: #121212;
-        --color-footer-bg: #121212;
-        --color-border: #333;
-        --color-input-bg: #2d2d2d;
-        
-        /* Component colors - dark mode */
-        --color-preloader-bg: #1a1a1a;
-        --color-loader: #4d9fff;
-        --color-card-bg: #222;
-        --color-code-bg: #2d2d2d;
-      }
-    }
-    
-    /* When JS sets the theme explicitly via data attribute */
-    [data-theme="dark"] {
-      /* Base colors - dark mode */
-      --color-background: #1a1a1a;
-      --color-text: #f5f5f5;
-      --color-primary: #4d9fff;
-      --color-secondary: #88ccff;
-      --color-accent: #00bfff;
-      
-      /* UI elements - dark mode */
-      --color-header-bg: #121212;
-      --color-footer-bg: #121212;
-      --color-border: #333;
-      --color-input-bg: #2d2d2d;
-      
-      /* Component colors - dark mode */
-      --color-preloader-bg: #1a1a1a;
-      --color-loader: #4d9fff;
-      --color-card-bg: #222;
-      --color-code-bg: #2d2d2d;
-    }
-    
-    /* Prevent transition flashes during initial load */
-    html:not(.transitions-enabled) * {
-      transition: none !important;
-    }
-    
-    /* Apply theme to preloader and early elements */
-    #preloader {
-      background-color: var(--color-preloader-bg);
-      color: var(--color-text);
-    }
-    
-    #loader {
-      border-color: var(--color-loader);
-      border-top-color: transparent;
-    }
-    
-    /* Noscript warning */
-    .noscript-warning {
-      background-color: var(--color-primary);
-      color: white;
-      text-align: center;
-      padding: 10px;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 1000;
-    }
-    
-    /* Theme indicator for no-JS */
-    .theme-indicator {
-      padding: 5px 10px;
-      border-radius: 4px;
-      background-color: var(--color-input-bg);
-      color: var(--color-text);
-      text-align: center;
-    }
-    
-    /* Hide JS-only elements when no JS */
-    .no-js .js-only {
-      display: none !important;
-    }
-    
-    /* Show no-JS alternatives */
-    .js .no-js-only {
-      display: none !important;
-    }
-  </style>
+  <link rel="stylesheet" href="../assets/css/theme-critical.css">
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -426,10 +270,93 @@
                 </div>
                 
                 <h1 id="cleanup.sh">cleanup.sh</h1>
+                
+                <div style="background-color: #ffcccc; border: 3px solid #ff0000; border-radius: 5px; padding: 15px; margin: 20px 0;">
+                    <h2 style="color: #cc0000; margin-top: 0;">⚠️ DANGER: Destructive Script Warning</h2>
+                    <p><strong>This script permanently deletes directories and ALL their contents!</strong></p>
+                    <ul style="margin: 10px 0;">
+                        <li>Files deleted with <code>rm -rf</code> CANNOT be recovered</li>
+                        <li>No recycle bin or trash - deletion is immediate and permanent</li>
+                        <li>Can delete entire directory trees including subdirectories</li>
+                        <li>Always double-check the directory path before running</li>
+                    </ul>
+                </div>
+                
+                <h2>Purpose</h2>
+                <p>This script is designed to clean up simulation output directories in the SOAPY project. It's commonly used to remove the <code>intermediate/</code> directories that contain large binary dump files from completed simulations.</p>
+                
+                <h2>Usage</h2>
+                <div class="code-block-container"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">./cleanup.sh</span> <span class="op">&lt;</span>directory_name<span class="op">&gt;</span></code></pre></div>
+                
+                <h3>Example:</h3>
+                <div class="code-block-container"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># Remove intermediate simulation data</span>
+<span class="ex">./cleanup.sh</span> intermediate
+
+<span class="co"># Remove a specific output directory</span>
+<span class="ex">./cleanup.sh</span> output_test_run</code></pre></div>
+                
+                <h2>Safety Features</h2>
+                <p>The enhanced script now includes several safety checks:</p>
+                <ol>
+                    <li><strong>Argument verification</strong> - Ensures a directory name is provided</li>
+                    <li><strong>Existence check</strong> - Verifies the directory exists before attempting deletion</li>
+                    <li><strong>Path display</strong> - Shows the full absolute path of the directory to be deleted</li>
+                    <li><strong>Size information</strong> - Displays directory size and file count</li>
+                    <li><strong>Confirmation prompt</strong> - Requires explicit "yes" confirmation before deletion</li>
+                    <li><strong>Graceful cancellation</strong> - Any response other than "yes" cancels the operation</li>
+                </ol>
+                
+                <h2>Script Source</h2>
                 <div class="code-block-container"><div class="code-block-container"><pre
                 class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span> <span class="at">-rf</span> <span class="dt">\$</span>1</span></code></pre></div></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># cleanup.sh - Safely remove directories with confirmation</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># WARNING: This script permanently deletes directories and all contents!</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Usage: ./cleanup.sh &lt;directory_name&gt;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Check if argument is provided</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">[</span> <span class="dt">\$</span><span class="co">#</span> <span class="ot">-eq</span> <span class="dv">0</span> <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> <span class="st">&quot;Error: No directory specified&quot;</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> <span class="st">&quot;Usage: \$0 &lt;directory_name&gt;&quot;</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="bu">exit</span> <span class="dv">1</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Check if directory exists</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">[</span> <span class="ot">!</span> <span class="ot">-d</span> <span class="st">&quot;\$1&quot;</span> <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> <span class="st">&quot;Error: Directory '\$1' does not exist&quot;</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="bu">exit</span> <span class="dv">1</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Get absolute path for clarity</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="va">FULLPATH</span><span class="op">=</span><span class="dt">\$</span><span class="kw">(</span><span class="bu">cd</span> <span class="st">&quot;\$1&quot;</span> <span class="dv">2</span><span class="op">&gt;</span>/dev/null <span class="kw">&amp;&amp;</span> <span class="bu">pwd</span><span class="kw">)</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">[</span> <span class="ot">-z</span> <span class="st">&quot;\$FULLPATH&quot;</span> <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> <span class="st">&quot;Error: Cannot access directory '\$1'&quot;</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="bu">exit</span> <span class="dv">1</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Show directory size and confirm deletion</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;WARNING: This will permanently delete the following directory and ALL its contents:&quot;</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;  \$FULLPATH&quot;</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;Directory information:&quot;</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="ex">du</span> <span class="at">-sh</span> <span class="st">&quot;\$1&quot;</span> <span class="dv">2</span><span class="op">&gt;</span>/dev/null <span class="kw">||</span> <span class="bu">echo</span> <span class="st">&quot;  Size: Unable to determine&quot;</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;  Number of files: \$(find &quot;</span><span class="dt">\$</span><span class="st">1&quot; -type f 2&gt;/dev/null | wc -l)&quot;</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="bu">read</span> <span class="at">-p</span> <span class="st">&quot;Are you sure you want to delete this directory? Type 'yes' to confirm: &quot;</span> <span class="va">CONFIRM</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">[</span> <span class="st">&quot;\$CONFIRM&quot;</span> <span class="ot">=</span> <span class="st">&quot;yes&quot;</span> <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> <span class="st">&quot;Deleting directory...&quot;</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rm</span> <span class="at">-rf</span> <span class="st">&quot;\$1&quot;</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">[</span> <span class="dt">\$</span><span class="kw">?</span> <span class="ot">-eq</span> <span class="dv">0</span> <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>        <span class="bu">echo</span> <span class="st">&quot;Directory successfully deleted.&quot;</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>        <span class="bu">echo</span> <span class="st">&quot;Error: Failed to delete directory.&quot;</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>        <span class="bu">exit</span> <span class="dv">1</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>    <span class="cf">fi</span></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> <span class="st">&quot;Deletion cancelled.&quot;</span></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>    <span class="bu">exit</span> <span class="dv">0</span></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span></code></pre></div></div>
             </div>
         </main>
 
