@@ -167,7 +167,7 @@ This code is part of ongoing research. For collaborations or questions:
 
 ## Authors
 
-- **Saumili Jana** - Primary developer (<jsaumili@gmail.com>)
+- **Saumili Jana** - Primary developer (<s.jana@utwente.nl>)
 - **Vatsal Sanjay** - [vatsalsy@comphy-lab.org](mailto:vatsalsy@comphy-lab.org)
 
 ## License
