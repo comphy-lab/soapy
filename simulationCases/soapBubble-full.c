@@ -16,7 +16,7 @@ The simulation captures:
 - Adaptive mesh refinement for efficient computation
 
 ## Authors and Changelog
-- **Author**: Saumili Jana (jsaumili@gmail.com)
+- **Author**: Saumili Jana (s.jana@utwente.nl)
 - **Created**: October 18, 2024
 
 ### Version History
