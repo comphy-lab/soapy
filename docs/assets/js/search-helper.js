@@ -1,3 +1,24 @@
+const SEARCH_RESULT_ORIGINS = new Set([
+  'https://comphy-lab.org',
+  'https://blogs.comphy-lab.org',
+]);
+
+function trustedSearchResultURL(value) {
+  if (typeof value !== 'string' || !value.startsWith('https://') ||
+      value !== value.trim() || /[\x00-\x1f\x7f\\]/.test(value)) {
+    return null;
+  }
+  try {
+    const url = new URL(value);
+    if (url.username || url.password || !SEARCH_RESULT_ORIGINS.has(url.origin)) {
+      return null;
+    }
+    return url.href;
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Shared search helper functions for website command palette
  * This file contains the shared search functionality used by both command-data.js and command-palette.js
@@ -167,8 +188,9 @@ window.searchHelper.searchDatabaseForCommandPalette = async function(query) {
             id: `search-result-${result.refIndex}`,
             title: safeTitle,
             handler: () => {
-              if (result.item.url) {
-                window.location.href = result.item.url;
+              const url = trustedSearchResultURL(result.item.url);
+              if (url) {
+                window.location.href = url;
               }
             },
             section: "Search Results",
